@@ -2,20 +2,24 @@
   "name": "knox",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "nodemon ./app.js",
-    "test": "jest"
+    "start": "cross-env NODE_ENV=production node src/server/main.js",
+    "dev": "nodemon src/server/main.js -w src/server -q",
+    "build": "vite build",
+    "test": "vitest"
   },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
+    "debug": "^4.3.4",
     "express": "^4.18.2",
-    "morgan": "~1.9.1"
+    "morgan": "^1.10.0",
+    "vite-express": "^0.12.0"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.0.1",
     "supertest": "^6.3.3",
-    "nodemon": "^3.0.1"
+    "vite": "^5.0.2",
+    "vitest": "^1.1.0"
   }
 }
