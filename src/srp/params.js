@@ -1,7 +1,7 @@
-import { toBigInt } from "./utils.js";
+import { toBigInt } from "../utils.js";
 
 export function getParams(group) {
-  if (params[group] === undefined) 
+  if (params[group] === undefined)
     throw new Error("Parameters are not available for this group.");
 
   return params[group];
@@ -43,4 +43,3 @@ const params = {
     g: 5,
   },
 };
-
