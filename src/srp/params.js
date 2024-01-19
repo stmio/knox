@@ -1,4 +1,4 @@
-import { toBigInt } from "../utils.js";
+import { hex } from "../utils.js";
 
 export function getParams(group) {
   if (params[group] === undefined)
@@ -9,17 +9,18 @@ export function getParams(group) {
 
 const params = {
   1024: {
-    N: toBigInt(`
+    N: hex.toBigInt(`
       EEAF0AB9 ADB38DD6 9C33F80A FA8FC5E8 60726187 75FF3C0B 9EA2314C
       9C256576 D674DF74 96EA81D3 383B4813 D692C6E0 E0D5D8E2 50B98BE4
       8E495C1D 6089DAD1 5DC7D7B4 6154D6B6 CE8EF4AD 69B15D49 82559B29
       7BCF1885 C529F566 660E57EC 68EDBC3C 05726CC0 2FD4CBF4 976EAA9A
       FD5138FE 8376435B 9FC61D2F C0EB06E3
     `),
-    g: 2,
+    g: 2n,
+    hash: "sha1",
   },
   4096: {
-    N: toBigInt(`
+    N: hex.toBigInt(`
       FFFFFFFF FFFFFFFF C90FDAA2 2168C234 C4C6628B 80DC1CD1 29024E08
       8A67CC74 020BBEA6 3B139B22 514A0879 8E3404DD EF9519B3 CD3A431B
       302B0A6D F25F1437 4FE1356D 6D51C245 E485B576 625E7EC6 F44C42E9
@@ -40,6 +41,7 @@ const params = {
       D5B05AA9 93B4EA98 8D8FDDC1 86FFB7DC 90A6C08F 4DF435C9 34063199
       FFFFFFFF FFFFFFFF
     `),
-    g: 5,
+    g: 5n,
+    hash: "sha256",
   },
 };
