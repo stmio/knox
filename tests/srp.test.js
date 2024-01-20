@@ -8,11 +8,43 @@ const test_user = {
   s: utils.hex.toBuffer("BEB25379 D1A8581E B5A72767 3A2441EE"),
 };
 
+const session = {
+  A: utils.hex.toBigInt(`
+    61D5E490 F6F1B795 47B0704C 436F523D D0E560F0 C64115BB 72557EC4
+    4352E890 3211C046 92272D8B 2D1A5358 A2CF1B6E 0BFCF99F 921530EC
+    8E393561 79EAE45E 42BA92AE ACED8251 71E1E8B9 AF6D9C03 E1327F44
+    BE087EF0 6530E69F 66615261 EEF54073 CA11CF58 58F0EDFD FE15EFEA
+    B349EF5D 76988A36 72FAC47B 0769447B
+  `),
+  B: utils.hex.toBigInt(`
+    BD0C6151 2C692C0C B6D041FA 01BB152D 4916A1E7 7AF46AE1 05393011
+    BAF38964 DC46A067 0DD125B9 5A981652 236F99D9 B681CBF8 7837EC99
+    6C6DA044 53728610 D0C6DDB5 8B318885 D7D82C7F 8DEB75CE 7BD4FBAA
+    37089E6F 9C6059F3 88838E7A 00030B33 1EB76840 910440B1 B27AAEAE
+    EB4012B7 D7665238 A8E3FB00 4B117B58
+  `),
+  S: utils.hex.toBigInt(`
+    B0DC82BA BCF30674 AE450C02 87745E79 90A3381F 63B387AA F271A10D
+    233861E3 59B48220 F7C4693C 9AE12B0A 6F67809F 0876E2D0 13800D6C
+    41BB59B6 D5979B5C 00A172B4 A2A5903A 0BDCAF8A 709585EB 2AFAFA8F
+    3499B200 210DCC1F 10EB3394 3CD67FC8 8A2F39A4 BE5BEC4E C0A3212D
+    C346D7E4 74B29EDE 8A469FFE CA686E5A
+  `),
+};
+
 describe("Core SRP cryptography", () => {
   test("Derive k", () => {
     const actual = core.derive_k();
     const expected =
       utils.hex.toBigInt("7556AA04 5AEF2CDD 07ABAF0F 665C3E81 8913186F");
+
+    expect(actual).toBe(expected);
+  });
+
+  test("Derive u", () => {
+    const actual = core.derive_u(session.A, session.B);
+    const expected =
+      utils.hex.toBigInt("CE38B959 3487DA98 554ED47D 70A7AE5F 462EF019");
 
     expect(actual).toBe(expected);
   });
@@ -49,16 +81,19 @@ describe("Client-side SRP cryptography", () => {
   });
 
   test("Derive A", () => {
-    const actual = client.derive_A(a);
-    const expected = utils.hex.toBigInt(`
-      61D5E490 F6F1B795 47B0704C 436F523D D0E560F0 C64115BB 72557EC4
-      4352E890 3211C046 92272D8B 2D1A5358 A2CF1B6E 0BFCF99F 921530EC
-      8E393561 79EAE45E 42BA92AE ACED8251 71E1E8B9 AF6D9C03 E1327F44
-      BE087EF0 6530E69F 66615261 EEF54073 CA11CF58 58F0EDFD FE15EFEA
-      B349EF5D 76988A36 72FAC47B 0769447B
-    `);
+    expect(client.derive_A(a)).toBe(session.A);
+  });
 
-    expect(actual).toBe(expected);
+  test("Derive S", () => {
+    const S = client.derive_S(
+      core.derive_k(),
+      client.derive_x(test_user.I, p, test_user.s),
+      a,
+      session.B,
+      core.derive_u(session.A, session.B)
+    );
+
+    expect(S).toBe(session.S);
   });
 });
 
@@ -68,16 +103,21 @@ describe("Server-side SRP cryptography", () => {
   );
 
   test("Derive B", () => {
-    const actual = server.derive_B(b, test_user.v, core.derive_k());
-    const expected = utils.hex.toBigInt(`
-      BD0C6151 2C692C0C B6D041FA 01BB152D 4916A1E7 7AF46AE1 05393011
-      BAF38964 DC46A067 0DD125B9 5A981652 236F99D9 B681CBF8 7837EC99
-      6C6DA044 53728610 D0C6DDB5 8B318885 D7D82C7F 8DEB75CE 7BD4FBAA
-      37089E6F 9C6059F3 88838E7A 00030B33 1EB76840 910440B1 B27AAEAE
-      EB4012B7 D7665238 A8E3FB00 4B117B58
-    `);
+    expect(
+      server.derive_B(b, test_user.v, core.derive_k())
+    ).toBe(session.B);
+  });
 
-    expect(actual).toBe(expected);
+
+  test("Derive S", () => {
+    const S = server.derive_S(
+      test_user.v,
+      session.A,
+      b,
+      core.derive_u(session.A, session.B)
+    );
+
+    expect(S).toBe(session.S);
   });
 });
 
