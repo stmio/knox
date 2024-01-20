@@ -7,7 +7,8 @@ hex.parseString = function(str, prefix = true) {
   const isHex = str.match(/^(0x)?([\da-fA-F]+)$/);
   if (!isHex) throw new Error("Input must be a hexadecimal string.");
 
-  const hex = str.replace("0x", "");
+  str = str.replace("0x", "");
+  const hex = str.length % 2 ? "0" + str : str;
   return prefix ? "0x" + hex : hex;
 }
 
