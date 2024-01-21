@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { core, client, server } from "../src/srp/srp.js";
+import { getParams } from "../src/srp/params.js";
 import * as utils from "../src/utils.js";
 
 // User data that would be stored in the server's database
@@ -104,6 +105,28 @@ describe("Client-side SRP cryptography", () => {
     expect(S).toBe(session.S);
   });
 
+  test("Abort with invalid server ephemeral", () => {
+    expect(() => {
+      client.derive_S(
+        core.derive_k(),
+        client.derive_x(test_user.I, p, test_user.s),
+        a,
+        getParams(1024).N * 2n,
+        core.derive_u(session.A, session.B)
+      );
+    }).toThrowError("abort");
+
+    expect(() => {
+      client.derive_S(
+        core.derive_k(),
+        client.derive_x(test_user.I, p, test_user.s),
+        a,
+        session.B,
+        0n
+      );
+    }).toThrowError("abort");
+  });
+
   test("Derive M1", () => {
     const actual = client.derive_M1(
       test_user.I, test_user.s,
@@ -140,6 +163,17 @@ describe("Server-side SRP cryptography", () => {
     );
 
     expect(S).toBe(session.S);
+  });
+
+  test("Abort with invalid client ephemeral", () => {
+    expect(() => {
+      server.derive_S(
+        test_user.v,
+        getParams(1024).N * 2n,
+        b,
+        core.derive_u(session.A, session.B)
+      );
+    }).toThrowError("abort");
   });
 
   test("Derive M2", () => {

@@ -7,7 +7,7 @@ export const client = {};
 export const server = {};
 
 // TODO: check extra mod N is needed in some places
-// TODO: add necessary parameter safeguards
+// TODO: make function I/O datatypes consistent
 
 // Use 1024-bit group if testing, use 4096-bit group otherwise
 const group = process.env.NODE_ENV === "test" ? 1024 : 4096;
@@ -108,6 +108,9 @@ client.derive_A = function(a) {
 }
 
 client.derive_S = function(k, x, a, B, u) {
+  if (mod(B, params.N) === 0n || u === 0n)
+    throw new Error("The server sent an invalid public ephemeral value, aborting...");
+
   return mod_exp(
     B - k * mod_exp(params.g, x, params.N),
     a + u * x,
@@ -138,6 +141,8 @@ server.derive_B = function(b, v, k) {
 }
 
 server.derive_S = function(v, A, b, u) {
+  if (mod(A, params.N) === 0n)
+    throw new Error("The client sent an invalid public ephemeral value, aborting...");
   return mod_exp(A * mod_exp(v, u, params.N), b, params.N);
 }
 
