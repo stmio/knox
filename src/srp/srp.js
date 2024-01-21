@@ -26,6 +26,18 @@ function pad(n) {
   return Buffer.concat([buf, n]);
 }
 
+// Bitwise XOR of two buffers
+function buf_xor(a, b) {
+  const len = Math.max(a.length, b.length);
+  const buf = Buffer.alloc(len);
+
+  for (let i = 0; i < len; i++) {
+    buf[i] = a[i] ^ b[i];
+  }
+
+  return buf;
+}
+
 // In JavaScript, % is the remainder operator, not the modulus.
 // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder
 function mod(n, d) {
@@ -78,6 +90,10 @@ core.derive_u = function(A, B) {
   return utils.hex.toBigInt(u);
 }
 
+core.derive_K = function(S) {
+  return hash(utils.hex.toBuffer(S));
+}
+
 client.derive_x = function(I, p, s) {
   const user_hash = hash(Buffer.concat([I, Buffer.from(":"), p]));
   return utils.hex.toBigInt(hash(s, user_hash));
@@ -104,6 +120,19 @@ client.derive_K = function(k, x, a, B, u) {
   return hash(S);
 }
 
+client.derive_M1 = function(I, s, A, B, K) {
+  const group_hash = buf_xor(
+    hash(utils.hex.toBuffer(params.N)),
+    hash(utils.hex.toBuffer(params.g))
+  );
+
+  return utils.hex.toBigInt(hash(
+    group_hash,
+    hash(I),
+    s, A, B, K
+  ));
+}
+
 server.derive_B = function(b, v, k) {
   return (k * v + mod_exp(params.g, b, params.N)) % params.N;
 }
@@ -115,5 +144,9 @@ server.derive_S = function(v, A, b, u) {
 server.derive_K = function(v, A, b, u) {
   const S = utils.hex.toBuffer(server.derive_S(v, A, b, u));
   return hash(S);
+}
+
+server.derive_M2 = function(A, M1, K) {
+  return utils.hex.toBigInt(hash(A, M1, K));
 }
 
