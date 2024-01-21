@@ -48,6 +48,14 @@ describe("Core SRP cryptography", () => {
 
     expect(actual).toBe(expected);
   });
+
+  test("Derive K (session key)", () => {
+    const actual = utils.hex.toBigInt(core.derive_K(session.S));
+    const expected =
+      utils.hex.toBigInt("017EEFA1 CEFC5C2E 626E2159 8987F31E 0F1B11BB");
+
+    expect(actual).toBe(expected);
+  });
 });
 
 describe("Client-side SRP cryptography", () => {
@@ -64,7 +72,7 @@ describe("Client-side SRP cryptography", () => {
     expect(actual).toBe(expected);
   });
 
-  test("Derive verifier (v)", () => {
+  test("Derive v (verifier)", () => {
     const x = client.derive_x(test_user.I, p, test_user.s);
     const actual = client.derive_v(x);
     test_user.v = actual;
@@ -95,6 +103,20 @@ describe("Client-side SRP cryptography", () => {
 
     expect(S).toBe(session.S);
   });
+
+  test("Derive M1", () => {
+    const actual = client.derive_M1(
+      test_user.I, test_user.s,
+      utils.hex.toBuffer(session.A),
+      utils.hex.toBuffer(session.B),
+      core.derive_K(session.S)
+    );
+    const expected =
+      utils.hex.toBigInt("3F3BC671 69EA7130 2599CF1B 0F5D408B 7B65D347");
+
+    session.M1 = actual;
+    expect(actual).toBe(expected);
+  });
 });
 
 describe("Server-side SRP cryptography", () => {
@@ -118,6 +140,18 @@ describe("Server-side SRP cryptography", () => {
     );
 
     expect(S).toBe(session.S);
+  });
+
+  test("Derive M2", () => {
+    const actual = server.derive_M2(
+      utils.hex.toBuffer(session.A),
+      utils.hex.toBuffer(session.M1),
+      utils.hex.toBuffer(core.derive_K(session.S))
+    );
+    const expected =
+      utils.hex.toBigInt("9CAB3C57 5A11DE37 D3AC1421 A9F00923 6A48EB55");
+
+    expect(actual).toBe(expected);
   });
 });
 
