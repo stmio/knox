@@ -1,5 +1,6 @@
 import "./style.css";
 
+import axios from "axios";
 import { setupCounter } from "./counter.js";
 import javascriptLogo from "/javascript.svg";
 import viteLogo from "/vite.svg";
@@ -20,3 +21,5 @@ document.querySelector("#app").innerHTML = `
 `;
 
 setupCounter(document.querySelector("#counter"));
+
+axios.get("/auth/register").then((res) => console.log(res.data));
