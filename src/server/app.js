@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import UsersRouter from "./routes/users.js";
+import AuthRouter from "./routes/auth.js";
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/users", UsersRouter);
+app.use("/auth", AuthRouter);
 
 app.get("/hello", (req, res) => {
   res.send("Hello Vite!");
