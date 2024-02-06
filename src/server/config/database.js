@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 import { models } from "../models/index.js";
 
-const db = new Sequelize("knox", "postgres", "applepiepancakes", {
+export const db = new Sequelize("knox", "postgres", "applepiepancakes", {
   host: "localhost",
   dialect: "postgres",
   logging: false,
