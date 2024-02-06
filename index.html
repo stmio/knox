@@ -7,7 +7,17 @@
     <title>Knox</title>
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/client/main.js"></script>
+    <div id="app">
+      <a href="/"><img class="logo" alt="Knox logo" /></a>
+      <h1 style="margin: 0">Knox</h1>
+      <div class="card">The password manager of the future.</div>
+      <div>
+        <a href="/register/">
+          <button id="register" type="button" role="link">Register</button>
+        </a>
+        <button id="login" type="button">Log in</button>
+      </div>
+    </div>
+    <script type="module" src="./src/client/main.js"></script>
   </body>
 </html>

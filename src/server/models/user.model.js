@@ -7,11 +7,20 @@ export function User(db) {
       autoIncrement: true,
       primaryKey: true,
     },
+    email: {
+      type: DataTypes.STRING,
+    },
     forename: {
       type: DataTypes.STRING,
     },
     surname: {
       type: DataTypes.STRING,
+    },
+    srp_v: {
+      type: DataTypes.STRING(4096),
+    },
+    srp_s: {
+      type: DataTypes.STRING(4096),
     },
   });
 }

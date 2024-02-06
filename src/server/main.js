@@ -4,7 +4,7 @@ import { initDatabase } from "./config/database.js";
 
 const PORT = 3000;
 
-ViteExpress.listen(app, PORT, () => {
+ViteExpress.listen(app, PORT, async () => {
   console.log("Server is listening on port", PORT);
-  initDatabase();
+  await initDatabase();
 });

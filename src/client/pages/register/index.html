@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/knox.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Knox - Register</title>
+  </head>
+  <body>
+    <div id="app">
+      <a href="/"><img class="logo" alt="Knox logo" /></a>
+      <h1 style="margin: 0">Register</h1>
+      <div class="card">for the password manager of the future...</div>
+      <form name="register" class="vstack">
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="Email"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Master Password"
+          required
+        />
+        <button id="confirm" type="button">Register</button>
+        <div id="msg" style="color: red"></div>
+      </form>
+    </div>
+    <script type="module" src="../register/register.js"></script>
+  </body>
+</html>

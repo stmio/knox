@@ -27,3 +27,7 @@ hex.toBuffer = function (str) {
   str = typeof str === "string" ? str : hex.toString(str);
   return Buffer.from(hex.parseString(str.split(/\s/).join(""), false), "hex");
 };
+
+export function isEmail(email) {
+  return /^\S+@\S+\.\S+$/.test(email);
+}
