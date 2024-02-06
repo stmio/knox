@@ -66,7 +66,7 @@ npm install > /dev/null
 
 # Build project with vite
 echo "Building Knox from source..."
-npm run build > /dev/null
+npm run build
 
 # Ready to start the production server
 # TODO: Add config/server management
