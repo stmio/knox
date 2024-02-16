@@ -44,7 +44,7 @@ describe("Client-side SRP cryptography", () => {
       test_vectors.x,
       test_vectors.a,
       test_vectors.B,
-      test_vectors.u
+      test_vectors.u,
     );
 
     expect(S).toBe(test_vectors.S);
@@ -57,7 +57,7 @@ describe("Client-side SRP cryptography", () => {
         test_vectors.x,
         test_vectors.a,
         N * 2n,
-        test_vectors.u
+        test_vectors.u,
       );
     }).toThrowError("abort");
 
@@ -67,7 +67,7 @@ describe("Client-side SRP cryptography", () => {
         test_vectors.x,
         test_vectors.a,
         test_vectors.B,
-        0n
+        0n,
       );
     }).toThrowError("abort");
   });
@@ -78,7 +78,7 @@ describe("Client-side SRP cryptography", () => {
       test_vectors.s,
       test_vectors.A,
       test_vectors.B,
-      test_vectors.K
+      test_vectors.K,
     );
 
     expect(M1).toBe(test_vectors.M1);
@@ -96,7 +96,7 @@ describe("Server-side SRP cryptography", () => {
       test_vectors.v,
       test_vectors.A,
       test_vectors.b,
-      test_vectors.u
+      test_vectors.u,
     );
 
     expect(S).toBe(test_vectors.S);
@@ -112,7 +112,7 @@ describe("Server-side SRP cryptography", () => {
     const M2 = server.derive_M2(
       test_vectors.A,
       test_vectors.M1,
-      test_vectors.K
+      test_vectors.K,
     );
 
     expect(M2).toBe(test_vectors.M2);

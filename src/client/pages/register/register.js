@@ -26,10 +26,12 @@ document.getElementById("confirm").addEventListener("click", () => {
   axios
     .post("/auth/register", {
       email: email,
-      srp_v: client
-        .derive_v(client.derive_x(Buffer.from(email), Buffer.from(pwd), s))
-        .toString(16),
-      srp_s: s.toString(16),
+      srp_v: hex.toString(
+        client.derive_v(
+          client.derive_x(Buffer.from(email), Buffer.from(pwd), s),
+        ),
+      ),
+      srp_s: hex.toString(s),
     })
     .then((res) => (window.location.href = "/"))
     .catch((res) => (msg.textContent = res.response.data.err));
