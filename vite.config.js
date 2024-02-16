@@ -24,7 +24,7 @@ export default defineConfig({
     {
       name: "dev-tree",
       configureServer(server) {
-        server.middlewares.use((req, res, next) => {
+        server.middlewares.use((req, _, next) => {
           const redirect = /(?<!src[\w\/]*)((\/\w+\/$)|(\/\w+.js$))/;
           if (redirect.test(req.url)) req.url = `/src/client/pages${req.url}`;
           next();
@@ -65,7 +65,6 @@ export default defineConfig({
     terserOptions: {
       compress: {
         arguments: true,
-        drop_console: true,
         drop_debugger: true,
       },
     },

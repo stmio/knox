@@ -6,7 +6,7 @@ import AuthRouter from "./routes/auth.js";
 const app = express();
 
 // Log requests if not running unit tests
-app.use(morgan("dev", { skip: (req, res) => process.env.NODE_ENV === "test" }));
+// app.use(morgan("dev", { skip: (req, res) => process.env.NODE_ENV === "test" }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
