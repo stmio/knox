@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -8,17 +8,47 @@
   </head>
   <body>
     <div id="app">
-      <a href="/"><img class="logo" alt="Knox logo" /></a>
-      <h1 style="margin: 0">Knox</h1>
-      <div class="card">The password manager of the future.</div>
-      <div>
-        <a href="/register/">
-          <button id="register" type="button" role="link">Register</button>
-        </a>
-        <a href="/login/">
-          <button id="login" type="button" role="link">Log in</button>
-        </a>
+      <div class="panel">
+        <a href="/"><img id="knox" class="logo" alt="Knox logo" /></a>
+        <h1 style="margin: 0">Knox</h1>
+        <div class="card">The password manager of the future.</div>
+        <div>
+          <a href="/register/">
+            <button id="register" type="button" role="link">Register</button>
+          </a>
+          <a href="/login/">
+            <button id="login" type="button" role="link">Log in</button>
+          </a>
+        </div>
       </div>
+      <div class="divider"></div>
+      <div class="panel vstack">
+        <div class="hstack">
+          <div class="subcard vstack">
+            <img id="comms" class="logo" alt="Van icon" />
+            Network communications are end-to-end encrypted with rotating
+            session keys.
+          </div>
+          <div class="subcard vstack">
+            <img id="encrypted" class="logo" alt="Magnifying glass icon" />
+            We can never see your data on our servers. Everything is decrypted
+            locally.
+          </div>
+        </div>
+        <div class="hstack">
+          <div class="subcard vstack">
+            <img id="auth" class="logo" alt="Handshake icon" />
+            Mutual authentication protects you against malicious servers, while
+            also deriving a secure session key.
+          </div>
+          <div class="subcard vstack">
+            <img id="signed" class="logo" alt="Signature icon" />
+            API requests are cryptographically signed and timestamped to protect
+            against replay attacks.
+          </div>
+        </div>
+      </div>
+      <div id="footer">Copyright &copy; 2024 Sam Turner</div>
     </div>
     <script type="module" src="./src/client/main.js"></script>
   </body>
