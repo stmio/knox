@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,9 +7,35 @@
     <title>Knox</title>
   </head>
   <body>
-    <div id="app">
-      <a href="/"><img class="logo" alt="Knox logo" /></a>
-      <h1 style="margin: 0">Vault</h1>
+    <div id="vault">
+      <div id="header" class="hstack">
+        <div class="nav hstack">
+          <a href="/"><img class="logo icon" alt="Knox logo" /></a>
+          Knox Vault
+        </div>
+        <div class="nav hstack align-end">
+          <a href="#settings">Settings</a>
+          <a href="/">Log out</a>
+        </div>
+      </div>
+      <div id="main" class="hstack">
+        <div id="sidebar">
+          <button id="new">New Item</button>
+          <div class="item">
+            <img class="icon" src="/website.svg" alt="Site icon" />
+            <div class="name">Website</div>
+          </div>
+        </div>
+        <div class="panel" id="info">Item info goes here</div>
+      </div>
+    </div>
+    <div id="settings">
+      <div>
+        <div id="settings-title">
+          <a href="#">&Cross;</a>
+          <h2>Knox Settings</h2>
+        </div>
+      </div>
     </div>
     <script type="module" src="../vault/vault.js"></script>
   </body>

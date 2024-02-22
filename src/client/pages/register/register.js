@@ -28,12 +28,15 @@ document.getElementById("confirm").addEventListener("click", () => {
       email: email,
       srp_v: hex.toString(
         client.derive_v(
-          client.derive_x(Buffer.from(email), Buffer.from(pwd), s),
-        ),
+          client.derive_x(Buffer.from(email), Buffer.from(pwd), s)
+        )
       ),
       srp_s: hex.toString(s),
     })
-    .then((res) => (window.location.href = "/"))
+    .then((res) => {
+      // TODO: change to auto login
+      window.location.href = "/login/";
+    })
     .catch((res) => (msg.textContent = res.response.data.err));
 
   document.forms["register"].reset();

@@ -60,7 +60,7 @@ document.getElementById("confirm").addEventListener("click", () => {
               K: hex.toString(K),
               identity: email,
               deviceID: device,
-            }),
+            })
           );
 
           window.location.href = "/vault/";
