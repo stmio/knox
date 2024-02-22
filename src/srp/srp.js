@@ -61,7 +61,7 @@ function mod_exp(a, x, N) {
 
 core.derive_k = function () {
   return hex.toBigInt(
-    hash(hex.toBuffer(params.N), pad(hex.toBuffer(params.g))),
+    hash(hex.toBuffer(params.N), pad(hex.toBuffer(params.g)))
   );
 };
 
@@ -69,7 +69,7 @@ core.derive_k = function () {
 core.get_private_ephemeral_key = function (bitLength = 512) {
   if (bitLength < 256)
     throw new Error(
-      "Must have a bit length of at least the recommended 256-bits.",
+      "Must have a bit length of at least the recommended 256-bits."
     );
   return hex.toBigInt(crypto.randomBytes(bitLength / 8));
 };
@@ -101,7 +101,7 @@ client.derive_A = function (a) {
 client.derive_S = function (k, x, a, B, u) {
   if (mod(B, params.N) === 0n || u === 0n)
     throw new Error(
-      "The server sent an invalid public ephemeral value, aborting...",
+      "The server sent an invalid public ephemeral value, aborting..."
     );
 
   return mod_exp(B - k * mod_exp(params.g, x, params.N), a + u * x, params.N);
@@ -115,7 +115,7 @@ client.derive_K = function (k, x, a, B, u) {
 client.derive_M1 = function (I, s, A, B, K) {
   const group_hash = buf_xor(
     hash(hex.toBuffer(params.N)),
-    hash(hex.toBuffer(params.g)),
+    hash(hex.toBuffer(params.g))
   );
 
   return hex.toBigInt(
@@ -125,14 +125,14 @@ client.derive_M1 = function (I, s, A, B, K) {
       hex.toBuffer(s),
       hex.toBuffer(A),
       hex.toBuffer(B),
-      hex.toBuffer(K),
-    ),
+      hex.toBuffer(K)
+    )
   );
 };
 
 client.verify_M2 = function (server_M2, A, M1, K) {
   const M2 = hex.toBigInt(
-    hash(hex.toBuffer(A), hex.toBuffer(M1), hex.toBuffer(K)),
+    hash(hex.toBuffer(A), hex.toBuffer(M1), hex.toBuffer(K))
   );
   return M2 === server_M2;
 };
@@ -144,7 +144,7 @@ server.derive_B = function (b, v, k) {
 server.derive_S = function (v, A, b, u) {
   if (mod(A, params.N) === 0n)
     throw new Error(
-      "The client sent an invalid public ephemeral value, aborting...",
+      "The client sent an invalid public ephemeral value, aborting..."
     );
   return mod_exp(A * mod_exp(v, u, params.N), b, params.N);
 };
@@ -161,7 +161,7 @@ server.derive_M2 = function (A, M1, K) {
 server.verify_M1 = function (client_M1, I, s, A, B, K) {
   const group_hash = buf_xor(
     hash(hex.toBuffer(params.N)),
-    hash(hex.toBuffer(params.g)),
+    hash(hex.toBuffer(params.g))
   );
 
   const M1 = hex.toBigInt(
@@ -171,8 +171,8 @@ server.verify_M1 = function (client_M1, I, s, A, B, K) {
       hex.toBuffer(s),
       hex.toBuffer(A),
       hex.toBuffer(B),
-      hex.toBuffer(K),
-    ),
+      hex.toBuffer(K)
+    )
   );
 
   return M1 === client_M1;
