@@ -1,5 +1,10 @@
 import { Sequelize } from "sequelize";
 import { models } from "../models/index.js";
+import { readFile } from "fs/promises";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export const db = new Sequelize("knox", "postgres", "applepiepancakes", {
   host: "localhost",
@@ -24,4 +29,8 @@ export async function initDatabase() {
   } catch (error) {
     console.error("Unable to sync with the database:", error);
   }
+
+  readFile(resolve(__dirname, "./accountID.sql"), { encoding: "utf-8" }).then(
+    (sql) => db.query(sql)
+  );
 }

@@ -63,6 +63,7 @@
   height: 60px;
   gap: 0.75em;
   align-items: center;
+  user-select: none;
 }
 
 .item:nth-child(odd) {

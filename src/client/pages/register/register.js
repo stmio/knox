@@ -20,7 +20,6 @@ document.getElementById("confirm").addEventListener("click", () => {
       : "Not a valid email address.";
     return;
   }
-
   msg.textContent = "";
 
   axios
