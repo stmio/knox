@@ -1,8 +1,9 @@
 import { DataTypes } from "sequelize";
 
 export function User(db) {
-  return db.define("User", {
+  return db.define("user", {
     id: {
+      // Modified in accountID.sql
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,

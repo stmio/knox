@@ -30,6 +30,7 @@ document.getElementById("confirm").addEventListener("click", () => {
     })
     .then((res) => {
       const device = res.data.device;
+      const userID = res.data.userID;
       const s = hex.toBigInt(res.data.s);
       const B = hex.toBigInt(res.data.B);
       const u = core.derive_u(A, B);
@@ -60,6 +61,7 @@ document.getElementById("confirm").addEventListener("click", () => {
               K: hex.toString(K),
               identity: email,
               deviceID: device,
+              userID: userID,
             })
           );
 
