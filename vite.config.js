@@ -56,6 +56,7 @@ export default defineConfig({
         format: "esm",
         manualChunks: {
           axios: ["axios"],
+          pdf: ["pdf-lib"],
           utils: ["stream", "util", "buffer", "randombytes"],
           crypto: ["crypto"],
         },
