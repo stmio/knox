@@ -138,7 +138,7 @@ client.verify_M2 = function (server_M2, A, M1, K) {
 };
 
 server.derive_B = function (b, v, k) {
-  return (k * v + mod_exp(params.g, b, params.N)) % params.N;
+  return mod(k * v + mod_exp(params.g, b, params.N), params.N);
 };
 
 server.derive_S = function (v, A, b, u) {
