@@ -36,7 +36,7 @@ export const loginUser = async (req, res) => {
     b: hex.toString(b),
     authenticated: 0,
   });
-  await redis.expire(cacheID, 60);
+  await redis.expire(cacheID, 10);
 
   res.status(200).json({
     B: hex.toString(B),
