@@ -1,5 +1,6 @@
 import axios from "axios";
 import { randomBytes } from "crypto";
+import { hkdf } from "hkdf";
 import { core, client } from "@/srp/srp.js";
 import { hex } from "@/utils.js";
 
@@ -49,12 +50,23 @@ export function login(email, pwd) {
             deviceID: device,
             challenge: hex.toString(M1),
           })
-          .then((res) => {
+          .then(async (res) => {
             const M2 = hex.toBigInt(res.data.challenge);
+            const enc_salt = hex.toBuffer(res.data.enc_salt);
+            const auth_salt = hex.toBuffer(res.data.auth_salt);
+
+            const SEK = Buffer.from(
+              await hkdf("sha512", hex.toBuffer(K), enc_salt, "enc", 64)
+            );
+            const SAK = Buffer.from(
+              await hkdf("sha512", hex.toBuffer(K), auth_salt, "auth", 64)
+            );
 
             client.verify_M2(M2, A, M1, K)
               ? resolve({
                   K: hex.toString(K),
+                  SEK: hex.toString(SEK),
+                  SAK: hex.toString(SAK),
                   identity: email,
                   deviceID: device,
                   userID: userID,
@@ -62,11 +74,11 @@ export function login(email, pwd) {
               : reject(new Error("Server is not trusted. Aborting..."));
           })
           .catch((error) => {
-            reject(new Error(error.response.data.err));
+            reject(new Error(error.response?.data.err || error));
           });
       })
       .catch((error) => {
-        reject(new Error(error.response.data.err));
+        reject(new Error(error.response?.data.err || error));
       });
   });
 }
