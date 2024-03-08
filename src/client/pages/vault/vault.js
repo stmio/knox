@@ -12,8 +12,10 @@ document.querySelector(".logo").src = knoxLogo;
 const session = JSON.parse(sessionStorage.getItem("session"));
 sessionStorage.removeItem("session");
 
-const { K, identity, device, userID } = {
+const { K, SEK, SAK, identity, device, userID } = {
   K: hex.toBigInt(session?.K || 0n),
+  SEK: hex.toBigInt(session?.SEK || 0n),
+  SAK: hex.toBigInt(session?.SAK || 0n),
   identity: session?.identity,
   device: session?.deviceID,
   userID: session?.userID,

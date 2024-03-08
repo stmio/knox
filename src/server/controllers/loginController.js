@@ -1,4 +1,4 @@
-import { randomBytes } from "crypto";
+import { randomBytes, hkdfSync as hkdf } from "crypto";
 import { hex } from "../../utils.js";
 import { core, server } from "../../srp/srp.js";
 import { db } from "../config/database.js";
@@ -72,13 +72,27 @@ export const authenticateUser = async (req, res) => {
   if (server.verify_M1(M1, identity, s, hex.toBigInt(cache.A), B, K)) {
     const M2 = server.derive_M2(hex.toBigInt(cache.A), M1, K);
 
+    const enc_salt = randomBytes(512 / 8);
+    const auth_salt = randomBytes(512 / 8);
+
+    const { SEK, SAK } = {
+      SEK: Buffer.from(hkdf("sha512", hex.toBuffer(K), enc_salt, "enc", 64)),
+      SAK: Buffer.from(hkdf("sha512", hex.toBuffer(K), auth_salt, "auth", 64)),
+    };
+
     await redis.hSet(cacheID, {
       K: hex.toString(K),
+      SEK: hex.toString(SEK),
+      SAK: hex.toString(SAK),
       authenticated: 1,
     });
     await redis.expire(cacheID, 900); // 15min session
 
-    res.status(200).json({ challenge: hex.toString(M2) });
+    res.status(200).json({
+      challenge: hex.toString(M2),
+      enc_salt: hex.toString(enc_salt),
+      auth_salt: hex.toString(auth_salt),
+    });
   } else {
     await redis.del(cacheID);
     res.status(401).json({ err: "Authentication was unsuccessful." });
