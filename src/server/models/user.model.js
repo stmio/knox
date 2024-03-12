@@ -11,6 +11,9 @@ export function User(db) {
     email: {
       type: DataTypes.STRING,
     },
+    uuid: {
+      type: DataTypes.UUID,
+    },
     forename: {
       type: DataTypes.STRING,
     },

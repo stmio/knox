@@ -1,6 +1,7 @@
 import "~/style.css";
 import knoxLogo from "/knox.svg";
 import * as auth from "~/scripts/auth.js";
+import { generate_secret_key } from "~/scripts/keys.js";
 import { isEmail } from "@/utils.js";
 
 document.querySelector(".logo").src = knoxLogo;
@@ -18,11 +19,14 @@ document.getElementById("confirm").addEventListener("click", () => {
   }
   msg.textContent = "";
 
+  const secret_key = generate_secret_key();
+  console.log(secret_key);
+
   auth
-    .register(email, pwd)
+    .register(email, pwd, secret_key)
     .then((res) => {
       auth
-        .login(email, pwd)
+        .login(email, pwd, secret_key)
         .then((data) => {
           sessionStorage.setItem("session", JSON.stringify(data));
           window.location.href = "/vault/";

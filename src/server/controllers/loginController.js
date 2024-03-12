@@ -43,6 +43,7 @@ export const loginUser = async (req, res) => {
     s: hex.toString(s),
     device: deviceID,
     userID: user.id,
+    uuid: user.uuid,
   });
 };
 
