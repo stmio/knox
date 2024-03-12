@@ -28,6 +28,18 @@ hex.toBuffer = function (str) {
   return Buffer.from(hex.parseString(str.split(/\s/).join(""), false), "hex");
 };
 
+// Bitwise XOR of two buffers
+hex.buf_xor = function (a, b) {
+  const len = Math.max(a.length, b.length);
+  const buf = Buffer.alloc(len);
+
+  for (let i = 0; i < len; i++) {
+    buf[i] = a[i] ^ b[i];
+  }
+
+  return buf;
+};
+
 export function isEmail(email) {
   return /^\S+@\S+\.\S+$/.test(email);
 }

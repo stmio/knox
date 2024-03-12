@@ -24,18 +24,6 @@ function pad(n) {
   return Buffer.concat([buf, n]);
 }
 
-// Bitwise XOR of two buffers
-function buf_xor(a, b) {
-  const len = Math.max(a.length, b.length);
-  const buf = Buffer.alloc(len);
-
-  for (let i = 0; i < len; i++) {
-    buf[i] = a[i] ^ b[i];
-  }
-
-  return buf;
-}
-
 // In JavaScript, % is the remainder operator, not the modulus.
 // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder
 function mod(n, d) {
@@ -113,7 +101,7 @@ client.derive_K = function (k, x, a, B, u) {
 };
 
 client.derive_M1 = function (I, s, A, B, K) {
-  const group_hash = buf_xor(
+  const group_hash = hex.buf_xor(
     hash(hex.toBuffer(params.N)),
     hash(hex.toBuffer(params.g))
   );
@@ -159,7 +147,7 @@ server.derive_M2 = function (A, M1, K) {
 };
 
 server.verify_M1 = function (client_M1, I, s, A, B, K) {
-  const group_hash = buf_xor(
+  const group_hash = hex.buf_xor(
     hash(hex.toBuffer(params.N)),
     hash(hex.toBuffer(params.g))
   );

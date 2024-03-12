@@ -2,25 +2,38 @@ import axios from "axios";
 import { randomBytes } from "crypto";
 import { hkdf } from "hkdf";
 import { core, client } from "@/srp/srp.js";
+import { two_sk_derivation } from "./keys.js";
 import { hex } from "@/utils.js";
 
 function generateSalt() {
   return hex.toBigInt(randomBytes(512 / 8));
 }
 
-export async function register(email, pwd) {
+export async function register(email, pwd, secret_key) {
   const s = generateSalt();
-  const x = client.derive_x(Buffer.from(email), Buffer.from(pwd), s);
+  const uuid = crypto.randomUUID();
+
+  const x = secret_key
+    ? await two_sk_derivation(
+        pwd,
+        secret_key,
+        hex.toString(s),
+        email,
+        "SRPg-4096",
+        uuid
+      )
+    : client.derive_x(Buffer.from(email), Buffer.from(pwd), s);
   const v = client.derive_v(x);
 
   return await axios.post("/auth/register", {
     email: email,
+    uuid: uuid,
     srp_v: hex.toString(v),
     srp_s: hex.toString(s),
   });
 }
 
-export function login(email, pwd) {
+export function login(email, pwd, secret_key) {
   return new Promise((resolve, reject) => {
     const a = core.get_private_ephemeral_key();
     const A = client.derive_A(a);
@@ -30,9 +43,10 @@ export function login(email, pwd) {
         identity: email,
         A: hex.toString(A),
       })
-      .then((res) => {
+      .then(async (res) => {
         const device = res.data.device;
         const userID = res.data.userID;
+        const uuid = res.data.uuid;
         const s = hex.toBigInt(res.data.s);
         const B = hex.toBigInt(res.data.B);
         const u = core.derive_u(A, B);
@@ -40,7 +54,17 @@ export function login(email, pwd) {
         // TODO: abort if safeguards fail
         // TODO: change buffer.from to hex
 
-        const x = client.derive_x(Buffer.from(email), Buffer.from(pwd), s);
+        const x = secret_key
+          ? await two_sk_derivation(
+              pwd,
+              secret_key,
+              hex.toString(s),
+              email,
+              "SRPg-4096",
+              uuid
+            )
+          : client.derive_x(Buffer.from(email), Buffer.from(pwd), s);
+
         const K = client.derive_K(core.derive_k(), x, a, B, u);
         const M1 = client.derive_M1(Buffer.from(email), s, A, B, K);
 
