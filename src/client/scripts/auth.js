@@ -102,7 +102,7 @@ export function login(email, pwd, secret_key) {
               ),
               "AES-GCM",
               false,
-              ["encrypt", "decrypt"]
+              ["encrypt", "decrypt", "wrapKey", "unwrapKey"]
             );
 
             // TOOD: how long to store AUK?
