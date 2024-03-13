@@ -71,3 +71,129 @@ export async function getKey(name) {
 
   return key;
 }
+
+export function generateKeychain(AUK) {
+  const webCrypto = window.crypto.subtle;
+
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const keychain = { uuid: crypto.randomUUID(), iv: iv };
+
+  return new Promise(async (resolve, reject) => {
+    const KEK = await webCrypto.generateKey(
+      { name: "AES-GCM", length: 256 },
+      true,
+      ["encrypt", "decrypt", "wrapKey", "unwrapKey"]
+    );
+
+    const { publicKey, privateKey } = await webCrypto.generateKey(
+      {
+        name: "RSA-OAEP",
+        modulusLength: 4096,
+        publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+        hash: "SHA-512",
+      },
+      true,
+      ["encrypt", "decrypt", "wrapKey", "unwrapKey"]
+    );
+
+    const VEK = await webCrypto.generateKey(
+      { name: "AES-GCM", length: 256 },
+      true,
+      ["encrypt", "decrypt"]
+    );
+
+    const exportedKeys = [
+      // Export RSA key pair (private encrypted with KEK)
+      webCrypto
+        .exportKey("jwk", publicKey)
+        .then((jwk) => (keychain.public = jwk)),
+      webCrypto
+        .wrapKey("jwk", privateKey, KEK, {
+          name: "AES-GCM",
+          iv: iv,
+        })
+        .then((jwk) => (keychain.private = new Uint8Array(jwk))),
+
+      // Export Vault Encryption Key (encrypted with RSA pair)
+      webCrypto
+        .wrapKey("jwk", VEK, publicKey, { name: "RSA-OAEP" })
+        .then((jwk) => (keychain.vek = new Uint8Array(jwk))),
+
+      // Export Keychain Encryption Key (encrypted with AUK)
+      webCrypto
+        .wrapKey("jwk", KEK, AUK, { name: "AES-GCM", iv: iv })
+        .then((jwk) => (keychain.kek = new Uint8Array(jwk))),
+    ];
+
+    Promise.all(exportedKeys)
+      .then(() => resolve(keychain))
+      .catch((err) => reject(err));
+  });
+}
+
+function parseKeychain(keychain) {
+  keychain = JSON.parse(keychain);
+
+  for (const key in keychain) {
+    // Needs converting to Uint8Array or ArrayBuffer
+    if (typeof keychain[key] === "object" && keychain[key][0]) {
+      if (key === "iv")
+        keychain[key] = new Uint8Array(Object.values(keychain[key]));
+      else keychain[key] = new Uint8Array(Object.values(keychain[key])).buffer;
+    }
+  }
+
+  return keychain;
+}
+
+export async function loadKeychain(keychain, AUK) {
+  if (typeof keychain === "string") keychain = parseKeychain(keychain);
+
+  const webCrypto = window.crypto.subtle;
+
+  keychain.public = await webCrypto.importKey(
+    "jwk",
+    keychain.public,
+    {
+      name: "RSA-OAEP",
+      hash: "SHA-512",
+    },
+    false,
+    ["encrypt", "wrapKey"]
+  );
+
+  keychain.kek = await webCrypto.unwrapKey(
+    "jwk",
+    keychain.kek,
+    AUK,
+    {
+      name: "AES-GCM",
+      iv: keychain.iv,
+    },
+    { name: "AES-GCM" },
+    false,
+    ["encrypt", "decrypt", "unwrapKey"]
+  );
+
+  keychain.private = await webCrypto.unwrapKey(
+    "jwk",
+    keychain.private,
+    keychain.kek,
+    { name: "AES-GCM", iv: keychain.iv },
+    { name: "RSA-OAEP", hash: "SHA-512" },
+    false,
+    ["decrypt", "unwrapKey"]
+  );
+
+  keychain.vek = await webCrypto.unwrapKey(
+    "jwk",
+    keychain.vek,
+    keychain.private,
+    { name: "RSA-OAEP" },
+    { name: "AES-GCM" },
+    false,
+    ["encrypt", "decrypt"]
+  );
+
+  return keychain;
+}
