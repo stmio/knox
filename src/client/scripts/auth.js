@@ -76,14 +76,14 @@ export function login(email, pwd, secret_key) {
           })
           .then(async (res) => {
             const M2 = hex.toBigInt(res.data.challenge);
-            const enc_salt = hex.toBuffer(res.data.enc_salt);
-            const auth_salt = hex.toBuffer(res.data.auth_salt);
+            const e2e_salt = hex.toBuffer(res.data.e2e_salt);
+            const sign_salt = hex.toBuffer(res.data.sign_salt);
 
             const SEK = Buffer.from(
-              await hkdf("sha512", hex.toBuffer(K), enc_salt, "enc", 64)
+              await hkdf("sha512", hex.toBuffer(K), e2e_salt, "enc", 64)
             );
             const SAK = Buffer.from(
-              await hkdf("sha512", hex.toBuffer(K), auth_salt, "auth", 64)
+              await hkdf("sha512", hex.toBuffer(K), sign_salt, "auth", 64)
             );
 
             client.verify_M2(M2, A, M1, K)
