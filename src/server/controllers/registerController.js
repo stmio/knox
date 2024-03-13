@@ -5,8 +5,8 @@ import { User as UserModel } from "../models/user.model.js";
 const User = UserModel(db);
 
 export const registerUser = async (req, res) => {
-  const { email, uuid, srp_v, srp_s } = req.body;
-  if (!email || !uuid || !srp_v || !srp_s) {
+  const { email, uuid, srp_v, srp_s, enc_salt } = req.body;
+  if (!email || !uuid || !srp_v || !srp_s || !enc_salt) {
     return res.status(400).json({ err: "Missing a required field." });
   }
 
@@ -27,6 +27,7 @@ export const registerUser = async (req, res) => {
       uuid: uuid,
       srp_v: hex.parseString(srp_v),
       srp_s: hex.parseString(srp_s),
+      enc_salt: hex.parseString(enc_salt),
     });
     res.status(201).json({ msg: `New user ${email} created!` });
   } catch (err) {

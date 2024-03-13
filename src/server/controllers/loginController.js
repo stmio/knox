@@ -91,6 +91,7 @@ export const authenticateUser = async (req, res) => {
 
     res.status(200).json({
       challenge: hex.toString(M2),
+      enc_salt: user.enc_salt,
       e2e_salt: hex.toString(e2e_salt),
       sign_salt: hex.toString(sign_salt),
     });

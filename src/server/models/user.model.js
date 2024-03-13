@@ -26,5 +26,8 @@ export function User(db) {
     srp_s: {
       type: DataTypes.STRING(4096),
     },
+    enc_salt: {
+      type: DataTypes.STRING(4096),
+    },
   });
 }
