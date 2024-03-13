@@ -2,7 +2,7 @@ import axios from "axios";
 import { randomBytes } from "crypto";
 import { hkdf } from "hkdf";
 import { core, client } from "@/srp/srp.js";
-import { two_sk_derivation } from "./keys.js";
+import * as keys from "./keys.js";
 import { hex } from "@/utils.js";
 
 function generateSalt() {
@@ -10,26 +10,28 @@ function generateSalt() {
 }
 
 export async function register(email, pwd, secret_key) {
-  const s = generateSalt();
+  const auth_salt = generateSalt();
+  const enc_salt = generateSalt();
   const uuid = crypto.randomUUID();
 
   const x = secret_key
-    ? await two_sk_derivation(
+    ? await keys.two_sk_derivation(
         pwd,
         secret_key,
-        hex.toString(s),
+        hex.toString(auth_salt),
         email,
         "SRPg-4096",
         uuid
       )
-    : client.derive_x(Buffer.from(email), Buffer.from(pwd), s);
+    : client.derive_x(Buffer.from(email), Buffer.from(pwd), auth_salt);
   const v = client.derive_v(x);
 
   return await axios.post("/auth/register", {
     email: email,
     uuid: uuid,
     srp_v: hex.toString(v),
-    srp_s: hex.toString(s),
+    srp_s: hex.toString(auth_salt),
+    enc_salt: hex.toString(enc_salt),
   });
 }
 
@@ -55,7 +57,7 @@ export function login(email, pwd, secret_key) {
         // TODO: change buffer.from to hex
 
         const x = secret_key
-          ? await two_sk_derivation(
+          ? await keys.two_sk_derivation(
               pwd,
               secret_key,
               hex.toString(s),
@@ -76,6 +78,7 @@ export function login(email, pwd, secret_key) {
           })
           .then(async (res) => {
             const M2 = hex.toBigInt(res.data.challenge);
+            const enc_salt = res.data.enc_salt;
             const e2e_salt = hex.toBuffer(res.data.e2e_salt);
             const sign_salt = hex.toBuffer(res.data.sign_salt);
 
@@ -85,6 +88,25 @@ export function login(email, pwd, secret_key) {
             const SAK = Buffer.from(
               await hkdf("sha512", hex.toBuffer(K), sign_salt, "auth", 64)
             );
+
+            const AUK = await keys.toCryptoKey(
+              hex.toBuffer(
+                await keys.two_sk_derivation(
+                  pwd,
+                  secret_key,
+                  enc_salt,
+                  email,
+                  "PBES2g-HS512",
+                  uuid
+                )
+              ),
+              "AES-GCM",
+              false,
+              ["encrypt", "decrypt"]
+            );
+
+            // TOOD: how long to store AUK?
+            await keys.storeKey("AUK", AUK);
 
             client.verify_M2(M2, A, M1, K)
               ? resolve({
