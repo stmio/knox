@@ -43,3 +43,16 @@ hex.buf_xor = function (a, b) {
 export function isEmail(email) {
   return /^\S+@\S+\.\S+$/.test(email);
 }
+
+export function validatePassword(pwd) {
+  if (pwd.length < 14)
+    return { status: false, msg: "Password must be at least 14 characters" };
+  if (!/[A-Z]/.test(pwd))
+    return { status: false, msg: "Password must contain an uppercase letter" };
+  if (!/[a-z]/.test(pwd))
+    return { status: false, msg: "Password must contain a lowercase letter" };
+  if (!/\d/.test(pwd))
+    return { status: false, msg: "Password must contain a number" };
+
+  return { status: true };
+}
