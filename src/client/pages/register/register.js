@@ -2,7 +2,7 @@ import "~/style.css";
 import knoxLogo from "/knox.svg";
 import * as auth from "~/scripts/auth.js";
 import { generate_secret_key } from "~/scripts/keys.js";
-import { isEmail } from "@/utils.js";
+import { isEmail, validatePassword } from "@/utils.js";
 
 document.querySelector(".logo").src = knoxLogo;
 
@@ -18,6 +18,12 @@ document.getElementById("confirm").addEventListener("click", () => {
     return;
   }
   msg.textContent = "";
+
+  const validPassword = validatePassword(pwd);
+  if (!validPassword.status) {
+    msg.textContent = validPassword.msg;
+    return;
+  }
 
   const secret_key = generate_secret_key();
   console.log(secret_key);
