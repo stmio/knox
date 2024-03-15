@@ -1,7 +1,9 @@
-import { randomBytes, pbkdf2 } from "crypto";
+import { randomBytes, pbkdf2, createHmac } from "crypto";
 import { hex } from "@/utils.js";
 import { hkdf } from "hkdf";
 import { openDB } from "idb";
+
+const session = {};
 
 export function generate_secret_key() {
   return randomBytes(16)
@@ -196,4 +198,30 @@ export async function loadKeychain(keychain, AUK) {
   );
 
   return keychain;
+}
+
+export function signRequest(method, url, timestamp, body) {
+  const HMAC = createHmac("sha512", hex.toBuffer(session.SAK));
+  HMAC.update(`${method.toUpperCase()}${url}${timestamp.toString()}${body}`);
+
+  return HMAC.digest("base64");
+}
+
+export function getUserSession() {
+  return session.K === 0n ? null : session;
+}
+
+// Check if on vault page when keys script is loaded
+if (window.location.pathname === "/vault/") {
+  const userSession = JSON.parse(sessionStorage.getItem("session"));
+  sessionStorage.removeItem("session");
+
+  Object.assign(session, {
+    K: hex.toBigInt(userSession?.K || 0n),
+    SEK: hex.toBigInt(userSession?.SEK || 0n),
+    SAK: hex.toBigInt(userSession?.SAK || 0n),
+    identity: userSession?.identity,
+    device: userSession?.deviceID,
+    userID: userSession?.userID,
+  });
 }
