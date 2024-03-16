@@ -29,6 +29,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  position: relative;
 }
 
 h1 {
@@ -45,9 +46,47 @@ h1 {
 
 #app:has(.panel) {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
   gap: 1em;
+}
+
+@media (min-width: 900px) {
+  #app:has(.panel) {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .divider {
+    width: 1px;
+    background: linear-gradient(
+      #ffffff00 0%,
+      #ffffffcc 35%,
+      #ffffffcc 65%,
+      #ffffff00 100%
+    );
+  }
+}
+
+@media (max-width: 900px) {
+  #app:has(.panel) {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .panel {
+    padding-bottom: 2em;
+  }
+
+  .divider {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      #ffffff00 0%,
+      #ffffffcc 35%,
+      #ffffffcc 65%,
+      #ffffff00 100%
+    );
+  }
 }
 
 .logo {
@@ -152,22 +191,12 @@ input:focus-visible {
   align-self: center;
 }
 
-.divider {
-  width: 0.5px;
-  background: linear-gradient(
-    #ffffff00 0%,
-    #ffffffcc 35%,
-    #ffffffcc 65%,
-    #ffffff00 100%
-  );
-}
-
 #footer {
   position: absolute;
   width: 100vw;
   font-size: small;
   text-align: center;
-  bottom: 0.5em;
+  bottom: 10px;
   color: #ffffff;
   opacity: 25%;
 }
