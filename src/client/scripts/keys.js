@@ -207,6 +207,13 @@ export function signRequest(method, url, timestamp, body) {
   return HMAC.digest("base64");
 }
 
+export function verifyResponse(signature, method, url, timestamp, body) {
+  const HMAC = createHmac("sha512", hex.toBuffer(session.SAK));
+  HMAC.update(`${method.toUpperCase()}${url}${timestamp.toString()}${body}`);
+
+  return signature === HMAC.digest("base64");
+}
+
 export function getUserSession() {
   return session.K === 0n ? null : session;
 }
