@@ -1,7 +1,9 @@
 import axios from "axios";
 import { signRequest, verifyResponse } from "./keys.js";
 
-axios.interceptors.request.use(
+export const api = axios.create();
+
+api.interceptors.request.use(
   (config) => {
     const timestamp = Math.floor(new Date().getTime() / 1000);
 
@@ -22,7 +24,7 @@ axios.interceptors.request.use(
   }
 );
 
-axios.interceptors.response.use(
+api.interceptors.response.use(
   (res) => {
     const timestamp = res.headers["x-response-timestamp"];
     const signature = res.headers["x-response-signature"];
@@ -45,5 +47,3 @@ axios.interceptors.response.use(
     return Promise.reject(new Error(error));
   }
 );
-
-export { axios as api };

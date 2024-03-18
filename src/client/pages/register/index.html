@@ -33,11 +33,39 @@
     <div id="window">
       <div>
         <div id="window-title">
-          <a href="#">&Cross;</a>
           <h2>Welcome to Knox</h2>
+          <div>Let's get your account set up...</div>
+        </div>
+        <div id="names" class="window-content">
+          <p>What should we call you?</p>
+          <input type="text" placeholder="First Name" id="f-name" required />
+          <input type="text" placeholder="Surname" id="surname" required />
+          <button id="names-submit">Next</button>
+        </div>
+        <div id="secret-key" class="window-content hide">
+          <p>
+            Your secret key is used to protect your account on new devices. It
+            will be downloaded as a PDF file which must be kept in a safe place
+            for use when logging into a new device. It is recommended to print
+            this file.
+          </p>
+
+          <p id="key">KEY12-KEY12-KEY12-KEY12-KEY12</p>
+          <button id="sk-submit">Next</button>
+        </div>
+        <div id="generate-keys" class="window-content hide">
+          <p>
+            Your account is almost ready!
+            <br />
+            We now need to generate the keys used to protect your account. This
+            may take a while. You will be redirected to your vault when the
+            process is completed.
+          </p>
+          <button id="submit">OK</button>
         </div>
       </div>
     </div>
+    <div id="loading"><img /></div>
     <script type="module" src="../register/register.js"></script>
   </body>
 </html>

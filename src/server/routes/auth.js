@@ -18,7 +18,8 @@ router.post(
     res.status(200);
     next();
   },
-  signResponse
+  signResponse,
+  (req, res) => res.json(res.body)
 );
 
 export default router;

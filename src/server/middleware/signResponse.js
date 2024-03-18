@@ -26,5 +26,5 @@ export const signResponse = async (req, res, next) => {
   res.header("x-response-timestamp", timestamp);
   res.header("x-response-signature", signature);
 
-  res.json(res.body);
+  next();
 };

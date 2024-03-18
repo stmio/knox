@@ -200,6 +200,22 @@ export async function loadKeychain(keychain, AUK) {
   return keychain;
 }
 
+export async function setupVault(keychain, AUK, user) {
+  const VEK = (await loadKeychain(keychain, AUK)).vek;
+  const vault = JSON.stringify({ knox: user });
+
+  const enc = new TextEncoder();
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+
+  const data = await window.crypto.subtle.encrypt(
+    { name: "AES-GCM", iv: iv },
+    VEK,
+    enc.encode(vault)
+  );
+
+  return JSON.stringify({ vault: new Uint8Array(data), iv: iv });
+}
+
 export function signRequest(method, url, timestamp, body) {
   const HMAC = createHmac("sha512", hex.toBuffer(session.SAK));
   HMAC.update(`${method.toUpperCase()}${url}${timestamp.toString()}${body}`);
@@ -214,14 +230,8 @@ export function verifyResponse(signature, method, url, timestamp, body) {
   return signature === HMAC.digest("base64");
 }
 
-export function getUserSession() {
-  return session.K === 0n ? null : session;
-}
-
-// Check if on vault page when keys script is loaded
-if (window.location.pathname === "/vault/") {
+function loadStoredSession() {
   const userSession = JSON.parse(sessionStorage.getItem("session"));
-  sessionStorage.removeItem("session");
 
   Object.assign(session, {
     K: hex.toBigInt(userSession?.K || 0n),
@@ -231,4 +241,15 @@ if (window.location.pathname === "/vault/") {
     device: userSession?.deviceID,
     userID: userSession?.userID,
   });
+}
+
+export function getUserSession() {
+  if (window.location.pathname === "/register/") loadStoredSession();
+  return session.K === 0n ? null : session;
+}
+
+// Check if on vault page when keys script is loaded
+if (window.location.pathname === "/vault/") {
+  loadStoredSession();
+  sessionStorage.removeItem("session");
 }

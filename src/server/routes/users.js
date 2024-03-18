@@ -1,9 +1,9 @@
 import express from "express";
+import { putName } from "../controllers/usersController.js";
+
 const router = express.Router();
 
 /* GET users listing. */
-router.get("/", function (req, res, next) {
-  res.send("respond with a resource");
-});
+router.put("/name", putName);
 
 export default router;
