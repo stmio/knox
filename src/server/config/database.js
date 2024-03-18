@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import { models } from "../models/index.js";
+import { models, setupAssociations } from "../models/index.js";
 import { readFile } from "fs/promises";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
@@ -22,6 +22,7 @@ export async function initDatabase() {
 
   // Load models
   Object.values(models).forEach((model) => model(db));
+  setupAssociations(db);
 
   try {
     await db.sync();

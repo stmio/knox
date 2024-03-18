@@ -1,7 +1,10 @@
 import express from "express";
 import morgan from "morgan";
-import UsersRouter from "./routes/users.js";
+
 import AuthRouter from "./routes/auth.js";
+import UsersRouter from "./routes/users.js";
+import KeychainsRouter from "./routes/keychains.js";
+import VaultsRouter from "./routes/vaults.js";
 
 const app = express();
 
@@ -16,9 +19,18 @@ app.use(morgan("dev", { skip: (req, res) => process.env.NODE_ENV === "test" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Public API routes
 app.use("/auth", AuthRouter);
 
 // Protected API routes
 app.use("/users", verifyRequest, UsersRouter, signResponse, sendResponse);
+app.use(
+  "/keychains",
+  verifyRequest,
+  KeychainsRouter,
+  signResponse,
+  sendResponse
+);
+app.use("/vaults", verifyRequest, VaultsRouter, signResponse, sendResponse);
 
 export default app;
