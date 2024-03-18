@@ -213,27 +213,96 @@ input:focus-visible {
 
 #window > div {
   display: flex;
-  justify-content: center;
-  min-width: 50vw;
+  flex-direction: column;
+  position: relative;
+  align-items: center;
+  min-width: 60vw;
   width: 700px;
   height: 75vh;
   background-color: #0d0d0d;
   border: 1px rgba(255, 255, 255, 0.87) solid;
 }
 
+.window-content {
+  display: flex;
+  width: 75%;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+  flex: 1;
+}
+
+.hide {
+  display: none !important;
+}
+
+.window-content > button,
+.window-content > input {
+  box-sizing: border-box;
+  width: 60%;
+}
+
 #window-title {
   display: flex;
-  position: relative;
-  width: 100%;
-  height: 10%;
+  position: absolute;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 0.25em;
 }
 
-#window-title > a {
+#close-window {
   position: absolute;
   font-size: larger;
   right: 1.5em;
+  top: 1em;
   color: inherit;
+}
+
+#loading {
+  display: none;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-color: #171717ee;
+  justify-content: center;
+  align-items: center;
+}
+
+#loading > img {
+  width: 5em;
+  height: 5em;
+  -webkit-animation: rotate-center 1.5s cubic-bezier(0.27, 0.92, 0.86, 0.06)
+    infinite both !important;
+  animation: rotate-center 1.5s cubic-bezier(0.27, 0.92, 0.86, 0.06) infinite
+    both !important;
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+#key {
+  font-size: larger;
+  font-weight: bold;
+}
+
+@-webkit-keyframes rotate-center {
+  0% {
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotate-center {
+  0% {
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }

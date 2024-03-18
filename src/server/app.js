@@ -5,6 +5,10 @@ import AuthRouter from "./routes/auth.js";
 
 const app = express();
 
+import { verifyRequest } from "./middleware/verifyRequest.js";
+import { signResponse } from "./middleware/signResponse.js";
+const sendResponse = (req, res) => res.json(res.body);
+
 // Log requests if not running unit tests
 app.use(morgan("dev", { skip: (req, res) => process.env.NODE_ENV === "test" }));
 
@@ -12,8 +16,9 @@ app.use(morgan("dev", { skip: (req, res) => process.env.NODE_ENV === "test" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// API routes
-app.use("/users", UsersRouter);
 app.use("/auth", AuthRouter);
+
+// Protected API routes
+app.use("/users", verifyRequest, UsersRouter, signResponse, sendResponse);
 
 export default app;
