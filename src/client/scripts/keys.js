@@ -150,6 +150,7 @@ function parseKeychain(keychain) {
 
 export async function loadKeychain(keychain, AUK) {
   if (typeof keychain === "string") keychain = parseKeychain(keychain);
+  else keychain = structuredClone(keychain);
 
   const webCrypto = window.crypto.subtle;
 
@@ -213,7 +214,11 @@ export async function setupVault(keychain, AUK, user) {
     enc.encode(vault)
   );
 
-  return JSON.stringify({ vault: new Uint8Array(data), iv: iv });
+  return {
+    vault: new Uint8Array(data),
+    iv: iv,
+    uuid: crypto.randomUUID(),
+  };
 }
 
 export function signRequest(method, url, timestamp, body) {

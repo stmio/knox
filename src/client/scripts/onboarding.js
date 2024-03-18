@@ -30,7 +30,7 @@ export async function onboardUser(identity, pwd, secret_key) {
       skMenu.classList.remove("hide");
 
       const sk = display_secret_key(session.userID, secret_key);
-      document.getElementById("key").textContent = sk;
+      document.getElementById("key-display").textContent = sk;
       await downloadSecretKeyPDF(sk);
     });
 
@@ -46,8 +46,22 @@ export async function onboardUser(identity, pwd, secret_key) {
     const keychain = await generateKeychain(AUK);
     const vault = await setupVault(keychain, AUK, [identity, pwd]);
 
-    console.log(vault);
-    // setTimeout(() => (window.location.href = "/vault/"), 1000);
+    await submitVault(
+      identity,
+      session.device,
+      vault.uuid,
+      JSON.stringify(vault)
+    );
+
+    await submitKeychain(
+      identity,
+      session.device,
+      keychain.uuid,
+      vault.uuid,
+      JSON.stringify(keychain)
+    );
+
+    setTimeout(() => (window.location.href = "/vault/"), 500);
   });
 }
 
@@ -57,6 +71,25 @@ function submitName(identity, deviceID, firstname, surname) {
     deviceID: deviceID,
     forename: firstname,
     surname: surname,
+  });
+}
+
+function submitVault(identity, deviceID, vaultUuid, data) {
+  return api.post("/vaults", {
+    email: identity,
+    deviceID: deviceID,
+    vaultUuid: vaultUuid,
+    data: data,
+  });
+}
+
+function submitKeychain(identity, deviceID, keychainUuid, vaultUuid, data) {
+  return api.post("/keychains", {
+    email: identity,
+    deviceID: deviceID,
+    keychainUuid: keychainUuid,
+    vaultUuid: vaultUuid,
+    data: data,
   });
 }
 
