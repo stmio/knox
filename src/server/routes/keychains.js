@@ -6,7 +6,7 @@ import {
 
 const router = express.Router();
 
-router.get("/", getKeychain);
-router.post("/", storeKeychain);
+router.post("/get", getKeychain);
+router.post("/store", storeKeychain);
 
 export default router;

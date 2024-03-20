@@ -21,20 +21,83 @@
       <div id="main" class="hstack">
         <div id="sidebar">
           <button id="new">New Item</button>
-          <div class="item">
-            <img class="icon" src="/website.svg" alt="Site icon" />
-            <div class="name">Website</div>
+          <template id="item-template">
+            <div class="item">
+              <img
+                class="icon"
+                onerror="this.src='/website.svg'"
+                alt="Site icon"
+              />
+              <div class="name">Website</div>
+            </div>
+          </template>
+        </div>
+        <div class="panel" id="info">
+          <div>
+            <h2 class="item-title">Website URL</h2>
+            <a id="url" href="https://example.com" target="_blank">
+              https://example.com
+            </a>
+          </div>
+
+          <div>
+            <h2 class="item-title">Email</h2>
+            <div id="email">account@email.com</div>
+          </div>
+
+          <div>
+            <h2 class="item-title">Password</h2>
+            <div id="pwd">secret123</div>
           </div>
         </div>
-        <div class="panel" id="info">Item info goes here</div>
       </div>
     </div>
     <div id="window">
-      <div>
+      <div id="settings" class="hide">
         <a href="#" id="close-window">&Cross;</a>
         <div id="window-title">
           <h2>Knox Settings</h2>
         </div>
+      </div>
+
+      <div id="new-item" class="hide">
+        <a href="#" id="close-window">&Cross;</a>
+        <div id="window-title">
+          <h2>Add a new item</h2>
+        </div>
+
+        <form name="new" id="item-values">
+          <input
+            type="text"
+            name="website"
+            id="new-name"
+            placeholder="Website Name"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            id="new-email"
+            placeholder="Email"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            id="new-password"
+            placeholder="Password"
+            required
+          />
+          <input
+            type="text"
+            name="url"
+            id="new-url"
+            placeholder="Website URL"
+            required
+          />
+
+          <button id="create">Create Item</button>
+        </form>
       </div>
     </div>
     <script type="module" src="../vault/vault.js"></script>

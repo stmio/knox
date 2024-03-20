@@ -33,7 +33,10 @@ export const getKeychain = async (req, res, next) => {
   }
 
   res.status(200);
-  res.body = JSON.stringify(keychain.data);
+  res.body = JSON.stringify({
+    keys: keychain.data,
+    vault: keychain.vaultUuid,
+  });
 
   next();
 };

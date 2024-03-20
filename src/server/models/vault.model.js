@@ -9,6 +9,9 @@ export function Vault(db) {
     data: {
       type: DataTypes.TEXT,
     },
+    iv: {
+      type: DataTypes.STRING(256),
+    },
     ownerId: {
       type: DataTypes.INTEGER,
     },

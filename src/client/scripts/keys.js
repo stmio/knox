@@ -201,9 +201,17 @@ export async function loadKeychain(keychain, AUK) {
   return keychain;
 }
 
-export async function setupVault(keychain, AUK, user) {
+export async function generateVault(keychain, AUK, email, pwd) {
   const VEK = (await loadKeychain(keychain, AUK)).vek;
-  const vault = JSON.stringify({ knox: user });
+
+  const vault = JSON.stringify([
+    {
+      name: "Knox",
+      url: "https://knox.com",
+      email: email,
+      pwd: pwd,
+    },
+  ]);
 
   const enc = new TextEncoder();
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -215,10 +223,31 @@ export async function setupVault(keychain, AUK, user) {
   );
 
   return {
-    vault: new Uint8Array(data),
+    data: new Uint8Array(data),
     iv: iv,
     uuid: crypto.randomUUID(),
   };
+}
+
+function parseVault(vault) {
+  for (const i in vault) {
+    vault[i] = new Uint8Array(Object.values(JSON.parse(vault[i])));
+  }
+
+  return vault;
+}
+
+export async function loadVault(VEK, vault) {
+  vault = parseVault(vault);
+  const decoder = new TextDecoder();
+
+  const data = await window.crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: vault.iv },
+    VEK,
+    vault.data
+  );
+
+  return JSON.parse(decoder.decode(data));
 }
 
 export function signRequest(method, url, timestamp, body) {

@@ -3,7 +3,7 @@ import { getVault, storeVault } from "../controllers/vaultsController.js";
 
 const router = express.Router();
 
-router.get("/", getVault);
-router.post("/", storeVault);
+router.post("/get", getVault);
+router.post("/store", storeVault);
 
 export default router;
