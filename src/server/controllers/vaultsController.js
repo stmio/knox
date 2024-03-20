@@ -33,13 +33,13 @@ export const getVault = async (req, res, next) => {
   }
 
   res.status(200);
-  res.body = JSON.stringify(vault.data);
+  res.body = JSON.stringify({ data: vault.data, iv: vault.iv });
 
   next();
 };
 
 export const storeVault = async (req, res, next) => {
-  const { vaultUuid, data, email } = req.body;
+  const { vaultUuid, data, iv, email } = req.body;
 
   const owner = await User.findOne({
     where: {
@@ -50,6 +50,7 @@ export const storeVault = async (req, res, next) => {
   await Vault.create({
     uuid: vaultUuid,
     data: data,
+    iv: iv,
     ownerId: owner.id,
   });
 

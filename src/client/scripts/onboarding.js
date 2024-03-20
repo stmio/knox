@@ -6,7 +6,7 @@ import {
   getUserSession,
   display_secret_key,
   generateKeychain,
-  setupVault,
+  generateVault,
   getKey,
 } from "./keys.js";
 
@@ -44,13 +44,14 @@ export async function onboardUser(identity, pwd, secret_key) {
 
     const AUK = await getKey("AUK");
     const keychain = await generateKeychain(AUK);
-    const vault = await setupVault(keychain, AUK, [identity, pwd]);
+    const vault = await generateVault(keychain, AUK, identity, pwd);
 
     await submitVault(
       identity,
       session.device,
       vault.uuid,
-      JSON.stringify(vault)
+      JSON.stringify(vault.data),
+      JSON.stringify(vault.iv)
     );
 
     await submitKeychain(
@@ -74,17 +75,18 @@ function submitName(identity, deviceID, firstname, surname) {
   });
 }
 
-function submitVault(identity, deviceID, vaultUuid, data) {
-  return api.post("/vaults", {
+function submitVault(identity, deviceID, vaultUuid, data, iv) {
+  return api.post("/vaults/store", {
     email: identity,
     deviceID: deviceID,
     vaultUuid: vaultUuid,
+    iv: iv,
     data: data,
   });
 }
 
 function submitKeychain(identity, deviceID, keychainUuid, vaultUuid, data) {
-  return api.post("/keychains", {
+  return api.post("/keychains/store", {
     email: identity,
     deviceID: deviceID,
     keychainUuid: keychainUuid,
