@@ -202,6 +202,29 @@ input:focus-visible {
   opacity: 25%;
 }
 
+#user-info {
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 0 5px;
+  height: 30px;
+}
+
+#uncache {
+  height: 30px;
+  width: 10px;
+  color: red;
+}
+
+#uncache:hover::after {
+  content: "Remove account from this device?";
+  position: relative;
+  top: 15px;
+  right: 150px;
+  text-wrap: nowrap;
+  font-size: x-small;
+}
+
 #window {
   background-color: #171717c7;
   display: none;

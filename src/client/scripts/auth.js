@@ -108,6 +108,14 @@ export function login(email, pwd, secret_key) {
             // TOOD: how long to store AUK?
             await keys.storeKey("AUK", AUK);
 
+            localStorage.setItem(
+              "user",
+              JSON.stringify({
+                email: email,
+                sk: secret_key,
+              })
+            );
+
             client.verify_M2(M2, A, M1, K)
               ? resolve({
                   K: hex.toString(K),
