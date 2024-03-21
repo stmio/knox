@@ -26,20 +26,27 @@ document.getElementById("confirm").addEventListener("click", () => {
   const msg = document.getElementById("msg");
 
   const email = user ? user.email : document.getElementById("email").value;
-  const sk = user ? user.sk : document.getElementById("key").value;
-
   const pwd = user
     ? document.getElementById("unlock").value
     : document.getElementById("password").value;
 
-  // TODO: secret key validation and add hyphens??
+  let sk = user ? user.sk : document.getElementById("key").value;
 
-  if (!email || !pwd || !isEmail(email)) {
+  if (!email || !pwd || !sk || !isEmail(email)) {
     msg.textContent = isEmail(email)
       ? "Missing a required field."
       : "Not a valid email address.";
     return;
   }
+
+  // Secret key validation
+  if (!sk.includes("-")) {
+    msg.textContent = "Please include the hyphens in your secret key.";
+    return;
+  }
+  // Key includes account ID
+  if (sk.length === 46) sk = sk.slice(7);
+
   msg.textContent = "";
   loading.style.display = "flex";
 
