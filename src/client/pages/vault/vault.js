@@ -23,6 +23,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!session) {
     window.location.href = "/login/";
     return;
+  } else {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const name = await api
+      .post("/users/name", {
+        email: session.identity,
+        deviceID: session.device,
+      })
+      .then((res) => res.data)
+      .catch((err) => console.log(err));
+
+    localStorage.setItem("user", JSON.stringify({ ...user, name: name }));
   }
 
   await checkUserStatus();

@@ -8,12 +8,29 @@ import { isEmail } from "@/utils.js";
 document.querySelector(".logo").src = knoxLogo;
 document.querySelector("#loading img").src = loadingIcon;
 
+const user = JSON.parse(localStorage.getItem("user"));
+
+const newUser = document.getElementById("new-user");
+const returningUser = document.getElementById("returning-user");
+if (user) {
+  document.getElementById("user-name").textContent = user.name;
+  returningUser.classList.remove("hide");
+  newUser.classList.add("hide");
+} else {
+  returningUser.classList.add("hide");
+  newUser.classList.remove("hide");
+}
+
 document.getElementById("confirm").addEventListener("click", () => {
   const loading = document.getElementById("loading");
   const msg = document.getElementById("msg");
-  const email = document.getElementById("email").value;
-  const pwd = document.getElementById("password").value;
-  const sk = document.getElementById("key").value;
+
+  const email = user ? user.email : document.getElementById("email").value;
+  const sk = user ? user.sk : document.getElementById("key").value;
+
+  const pwd = user
+    ? document.getElementById("unlock").value
+    : document.getElementById("password").value;
 
   // TODO: secret key validation and add hyphens??
 
@@ -39,4 +56,9 @@ document.getElementById("confirm").addEventListener("click", () => {
     });
 
   document.forms["login"].reset();
+});
+
+document.getElementById("uncache").addEventListener("click", () => {
+  localStorage.removeItem("user");
+  window.location.reload();
 });

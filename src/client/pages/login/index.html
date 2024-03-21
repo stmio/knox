@@ -10,29 +10,49 @@
     <div id="app">
       <a href="/"><img class="logo" alt="Knox logo" /></a>
       <h1 style="margin: 0">Login</h1>
+
       <div class="card">to the password manager of the future...</div>
       <form name="login" class="vstack">
-        <input
-          type="email"
-          name="email"
-          id="email"
-          placeholder="Email"
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          id="password"
-          placeholder="Master Password"
-          required
-        />
-        <input
-          type="text"
-          name="secret-key"
-          id="key"
-          placeholder="Secret Key"
-          required
-        />
+        <div class="vstack" id="new-user">
+          <input
+            type="email"
+            name="email"
+            id="email"
+            placeholder="Email"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Master Password"
+            required
+          />
+          <input
+            type="text"
+            name="secret-key"
+            id="key"
+            placeholder="Secret Key"
+            required
+          />
+        </div>
+
+        <div class="vstack hide" id="returning-user">
+          <div id="user-info">
+            <div>
+              <strong>Welcome back,</strong>
+              <span id="user-name">John Smith</span>
+            </div>
+            <div id="uncache">&Cross;</div>
+          </div>
+          <input
+            type="password"
+            name="password"
+            id="unlock"
+            placeholder="Master Password"
+            required
+          />
+        </div>
         <button id="confirm" type="button">Login</button>
         <div id="msg" style="color: red"></div>
       </form>

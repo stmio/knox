@@ -5,6 +5,21 @@ import { Keychain as KeychainModel } from "../models/keychain.model.js";
 const User = UserModel(db);
 const Keychain = KeychainModel(db);
 
+export const getName = async (req, res, next) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({
+    where: {
+      email: email,
+    },
+  });
+
+  res.status(200);
+  res.body = `${user.forename} ${user.surname}`;
+
+  next();
+};
+
 export const putName = async (req, res, next) => {
   const { email, forename, surname } = req.body;
 
