@@ -1,11 +1,15 @@
 import "~/style.css";
 import knoxLogo from "/knox.svg";
+import loadingIcon from "/loading.svg";
+
 import * as auth from "~/scripts/auth.js";
 import { isEmail } from "@/utils.js";
 
 document.querySelector(".logo").src = knoxLogo;
+document.querySelector("#loading img").src = loadingIcon;
 
 document.getElementById("confirm").addEventListener("click", () => {
+  const loading = document.getElementById("loading");
   const msg = document.getElementById("msg");
   const email = document.getElementById("email").value;
   const pwd = document.getElementById("password").value;
@@ -20,6 +24,7 @@ document.getElementById("confirm").addEventListener("click", () => {
     return;
   }
   msg.textContent = "";
+  loading.style.display = "flex";
 
   auth
     .login(email, pwd, sk)
@@ -30,6 +35,7 @@ document.getElementById("confirm").addEventListener("click", () => {
     .catch((err) => {
       console.log(err);
       msg.textContent = err.message;
+      loading.style.display = "none";
     });
 
   document.forms["login"].reset();
