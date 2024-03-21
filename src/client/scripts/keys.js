@@ -229,9 +229,28 @@ export async function generateVault(keychain, AUK, email, pwd) {
   };
 }
 
+export async function encryptVault(VEK, vault, uuid) {
+  const enc = new TextEncoder();
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+
+  const data = await window.crypto.subtle.encrypt(
+    { name: "AES-GCM", iv: iv },
+    VEK,
+    enc.encode(JSON.stringify(vault))
+  );
+
+  return {
+    data: new Uint8Array(data),
+    iv: iv,
+    uuid: uuid,
+  };
+}
+
 function parseVault(vault) {
   for (const i in vault) {
-    vault[i] = new Uint8Array(Object.values(JSON.parse(vault[i])));
+    if (i !== "uuid") {
+      vault[i] = new Uint8Array(Object.values(JSON.parse(vault[i])));
+    }
   }
 
   return vault;
