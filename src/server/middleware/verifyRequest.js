@@ -14,8 +14,8 @@ export const verifyRequest = async (req, res, next) => {
   const session = await redis.hGet(`${email}:${deviceID}`, "SAK");
   if (!session) return res.status(401).json({ err: "No valid session found" });
 
-  const signature = req.headers["x-request-signature"];
-  const timestamp = req.headers["x-request-timestamp"];
+  const signature = req.headers["X-Request-Signature"];
+  const timestamp = req.headers["X-Request-Timestamp"];
 
   const validSignature = verifySignature(
     signature,

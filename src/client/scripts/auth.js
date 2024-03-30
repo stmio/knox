@@ -83,7 +83,7 @@ export function login(email, pwd, secret_key) {
             const sign_salt = hex.toBuffer(res.data.sign_salt);
 
             const SEK = Buffer.from(
-              await hkdf("sha512", hex.toBuffer(K), e2e_salt, "enc", 64)
+              await hkdf("sha512", hex.toBuffer(K), e2e_salt, "enc", 32)
             );
             const SAK = Buffer.from(
               await hkdf("sha512", hex.toBuffer(K), sign_salt, "auth", 64)

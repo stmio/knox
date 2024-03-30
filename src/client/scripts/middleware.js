@@ -1,5 +1,5 @@
 import axios from "axios";
-import { signRequest, verifyResponse } from "./keys.js";
+import { signRequest, verifyResponse, encryptRequest } from "./keys.js";
 
 export const api = axios.create();
 
@@ -17,7 +17,7 @@ api.interceptors.request.use(
     config.headers["X-Request-Timestamp"] = timestamp;
     config.headers["X-Request-Signature"] = signature;
 
-    return config;
+    return encryptRequest(config);
   },
   (error) => {
     return Promise.reject(new Error(error));
