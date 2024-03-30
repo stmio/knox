@@ -1,6 +1,12 @@
-import { randomBytes, pbkdf2, createHmac } from "crypto";
-import { hex } from "@/utils.js";
+import {
+  randomBytes,
+  pbkdf2,
+  createHmac,
+  createCipheriv,
+  createDecipheriv,
+} from "crypto";
 import { hkdf } from "hkdf";
+import { hex } from "@/utils.js";
 import { openDB } from "idb";
 
 const session = {};
@@ -207,7 +213,7 @@ export async function generateVault(keychain, AUK, email, pwd) {
   const vault = JSON.stringify([
     {
       name: "Knox",
-      url: "https://knox.com",
+      url: "http://localhost:3000",
       email: email,
       pwd: pwd,
     },
@@ -281,6 +287,46 @@ export function verifyResponse(signature, method, url, timestamp, body) {
   HMAC.update(`${method.toUpperCase()}${url}${timestamp.toString()}${body}`);
 
   return signature === HMAC.digest("base64");
+}
+
+export function encryptRequest(req) {
+  const headers = req.headers;
+  const h_iv = crypto.getRandomValues(new Uint8Array(16));
+  const h_cipher = createCipheriv(
+    "aes-256-gcm",
+    hex.toBuffer(session.SEK),
+    h_iv
+  );
+
+  req.headers = {
+    iv: h_iv,
+    headers: Buffer.from(
+      h_cipher.update(JSON.stringify(headers), "utf-8", "hex") +
+        h_cipher.final("hex")
+    ).toString("base64"),
+    tag: h_cipher.getAuthTag().toString("base64"),
+  };
+
+  const { email, deviceID, ...data } = req.data;
+  const d_iv = crypto.getRandomValues(new Uint8Array(16));
+  const d_cipher = createCipheriv(
+    "aes-256-gcm",
+    hex.toBuffer(session.SEK),
+    d_iv
+  );
+
+  req.data = {
+    iv: d_iv,
+    email: email,
+    deviceID: deviceID,
+    data: Buffer.from(
+      d_cipher.update(JSON.stringify(data), "utf-8", "hex") +
+        d_cipher.final("hex")
+    ).toString("base64"),
+    tag: d_cipher.getAuthTag().toString("base64"),
+  };
+
+  return req;
 }
 
 function loadStoredSession() {

@@ -77,7 +77,7 @@ export const authenticateUser = async (req, res) => {
     const sign_salt = randomBytes(512 / 8);
 
     const { SEK, SAK } = {
-      SEK: Buffer.from(hkdf("sha512", hex.toBuffer(K), e2e_salt, "enc", 64)),
+      SEK: Buffer.from(hkdf("sha512", hex.toBuffer(K), e2e_salt, "enc", 32)),
       SAK: Buffer.from(hkdf("sha512", hex.toBuffer(K), sign_salt, "auth", 64)),
     };
 
