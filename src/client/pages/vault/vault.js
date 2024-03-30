@@ -146,6 +146,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     const encVault = await encryptVault(keychain.vek, vault, vaultUuid);
     await submitVault(encVault);
   });
+
+  document.getElementById("export").addEventListener("click", () => {
+    const jsonVault = JSON.stringify(vault);
+
+    const blob = new Blob([jsonVault], { type: "application/json" });
+    const jsonObject = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = jsonObject;
+    link.download = "knox.json";
+    link.click();
+
+    URL.revokeObjectURL(jsonObject);
+  });
 });
 
 function listItem(item, selected = false) {
