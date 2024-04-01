@@ -50,8 +50,8 @@ export async function onboardUser(identity, pwd, secret_key) {
       identity,
       session.device,
       vault.uuid,
-      JSON.stringify(vault.data),
-      JSON.stringify(vault.iv)
+      vault.data,
+      vault.iv
     );
 
     await submitKeychain(
@@ -59,7 +59,7 @@ export async function onboardUser(identity, pwd, secret_key) {
       session.device,
       keychain.uuid,
       vault.uuid,
-      JSON.stringify(keychain)
+      keychain
     );
 
     setTimeout(() => (window.location.href = "/vault/"), 500);

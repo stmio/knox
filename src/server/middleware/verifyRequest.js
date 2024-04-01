@@ -4,7 +4,9 @@ import { createHmac } from "crypto";
 
 function verifySignature(signature, SAK, method, url, timestamp, body) {
   const HMAC = createHmac("sha512", hex.toBuffer(SAK));
-  HMAC.update(`${method.toUpperCase()}${url}${timestamp.toString()}${body}`);
+  HMAC.update(
+    `${method.toUpperCase()}${url}${timestamp.toString()}${body.data}`
+  );
 
   return signature === HMAC.digest("base64");
 }
@@ -14,8 +16,8 @@ export const verifyRequest = async (req, res, next) => {
   const session = await redis.hGet(`${email}:${deviceID}`, "SAK");
   if (!session) return res.status(401).json({ err: "No valid session found" });
 
-  const signature = req.headers["X-Request-Signature"];
-  const timestamp = req.headers["X-Request-Timestamp"];
+  const signature = req.headers["x-request-signature"];
+  const timestamp = req.headers["x-request-timestamp"];
 
   const validSignature = verifySignature(
     signature,

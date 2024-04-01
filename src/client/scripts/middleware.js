@@ -1,10 +1,17 @@
 import axios from "axios";
-import { signRequest, verifyResponse, encryptRequest } from "./keys.js";
+import {
+  signRequest,
+  verifyResponse,
+  encryptRequest,
+  decryptResponse,
+} from "./keys.js";
 
 export const api = axios.create();
 
 api.interceptors.request.use(
   (config) => {
+    encryptRequest(config);
+
     const timestamp = Math.floor(new Date().getTime() / 1000);
 
     const signature = signRequest(
@@ -14,10 +21,10 @@ api.interceptors.request.use(
       config.data
     );
 
-    config.headers["X-Request-Timestamp"] = timestamp;
-    config.headers["X-Request-Signature"] = signature;
+    config.headers["x-request-timestamp"] = timestamp;
+    config.headers["x-request-signature"] = signature;
 
-    return encryptRequest(config);
+    return config;
   },
   (error) => {
     return Promise.reject(new Error(error));
@@ -41,7 +48,7 @@ api.interceptors.response.use(
       return Promise.reject(new Error("Server sent an invalid signature"));
     else if (Math.floor(new Date().getTime() / 1000) - timestamp > 5)
       return Promise.reject(new Error("Response timestamp is too old"));
-    else return res;
+    else return decryptResponse(res);
   },
   (error) => {
     return Promise.reject(new Error(error));

@@ -52,7 +52,7 @@ export const storeKeychain = async (req, res, next) => {
 
   await Keychain.create({
     uuid: keychainUuid,
-    data: data,
+    data: JSON.stringify(data),
     vaultUuid: vaultUuid,
     userId: owner.id,
   });

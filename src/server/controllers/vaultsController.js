@@ -53,8 +53,8 @@ export const storeVault = async (req, res, next) => {
 
   await Vault.create({
     uuid: vaultUuid,
-    data: data,
-    iv: iv,
+    data: JSON.stringify(data),
+    iv: JSON.stringify(iv),
     ownerId: owner.id,
   });
 

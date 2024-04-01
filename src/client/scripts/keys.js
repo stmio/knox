@@ -277,14 +277,18 @@ export async function loadVault(VEK, vault) {
 
 export function signRequest(method, url, timestamp, body) {
   const HMAC = createHmac("sha512", hex.toBuffer(session.SAK));
-  HMAC.update(`${method.toUpperCase()}${url}${timestamp.toString()}${body}`);
+  HMAC.update(
+    `${method.toUpperCase()}${url}${timestamp.toString()}${body.data}`
+  );
 
   return HMAC.digest("base64");
 }
 
 export function verifyResponse(signature, method, url, timestamp, body) {
   const HMAC = createHmac("sha512", hex.toBuffer(session.SAK));
-  HMAC.update(`${method.toUpperCase()}${url}${timestamp.toString()}${body}`);
+  HMAC.update(
+    `${method.toUpperCase()}${url}${timestamp.toString()}${body.enc_data}`
+  );
 
   return signature === HMAC.digest("base64");
 }
@@ -327,6 +331,48 @@ export function encryptRequest(req) {
   };
 
   return req;
+}
+
+export function decryptResponse(res) {
+  const h_iv = new Uint8Array(JSON.parse(`[${res.headers.iv}]`));
+  const h_cipher = createDecipheriv(
+    "aes-256-gcm",
+    hex.toBuffer(session.SEK),
+    h_iv
+  );
+  h_cipher.setAuthTag(Buffer.from(res.headers.tag, "base64"));
+
+  res.headers = {
+    ...res.headers,
+    ...JSON.parse(
+      h_cipher.update(
+        Buffer.from(res.headers.headers, "base64").toString("utf-8"),
+        "hex",
+        "utf-8"
+      ) + h_cipher.final("utf-8")
+    ),
+  };
+
+  const d_iv = new Uint8Array(Object.values(res.data.iv));
+  const d_cipher = createDecipheriv(
+    "aes-256-gcm",
+    hex.toBuffer(session.SEK),
+    d_iv
+  );
+  d_cipher.setAuthTag(Buffer.from(res.data.tag, "base64"));
+
+  const body = JSON.parse(
+    d_cipher.update(
+      Buffer.from(res.data.enc_data, "base64").toString("utf-8"),
+      "hex",
+      "utf-8"
+    ) + d_cipher.final("utf-8")
+  );
+
+  if (typeof body === "string") res.data = body;
+  else res.data = { ...res.data, ...body };
+
+  return res;
 }
 
 function loadStoredSession() {
