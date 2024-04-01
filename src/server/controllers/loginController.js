@@ -12,7 +12,6 @@ export const loginUser = async (req, res) => {
   if (!identity || !A) {
     return res.status(400).json({ err: "Missing a required field." });
   }
-  // TODO: check A mod N
 
   const user = await User.findOne({
     where: {
@@ -49,6 +48,10 @@ export const loginUser = async (req, res) => {
 
 export const authenticateUser = async (req, res) => {
   const { identity, deviceID } = req.body;
+  if (!identity || !deviceID || !req.body.challenge) {
+    return res.status(400).json({ err: "Missing a required field." });
+  }
+
   const M1 = hex.toBigInt(req.body.challenge);
 
   const cacheID = `${identity}:${deviceID}`;
@@ -64,7 +67,7 @@ export const authenticateUser = async (req, res) => {
   const { v, s } = { v: hex.toBigInt(user.srp_v), s: hex.toBigInt(user.srp_s) };
 
   const cache = await redis.hGetAll(cacheID);
-  // TODO: fail if no result or missing req params. clean up types so less conversion?
+  if (!cache) res.status(401).json({ err: "Authentication was unsuccessful." });
 
   const B = server.derive_B(hex.toBigInt(cache.b), v, core.derive_k());
   const u = core.derive_u(hex.toBigInt(cache.A), B);

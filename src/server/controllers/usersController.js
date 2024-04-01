@@ -34,8 +34,6 @@ export const putName = async (req, res, next) => {
   next();
 };
 
-// TODO: get name
-
 export const getUserKeychainUUIDs = async (req, res, next) => {
   const { email } = req.body;
 

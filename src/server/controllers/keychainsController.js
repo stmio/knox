@@ -5,8 +5,6 @@ import { User as UserModel } from "../models/user.model.js";
 const Keychain = KeychainModel(db);
 const User = UserModel(db);
 
-// TODO: edge cases?
-
 export const getKeychain = async (req, res, next) => {
   const { keychainUuid, email } = req.body;
 

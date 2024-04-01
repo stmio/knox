@@ -3,6 +3,7 @@ import knoxLogo from "/knox.svg";
 import loadingIcon from "/loading.svg";
 
 import * as auth from "~/scripts/auth.js";
+import { delKey } from "~/scripts/keys.js";
 import { isEmail } from "@/utils.js";
 
 document.querySelector(".logo").src = knoxLogo;
@@ -65,7 +66,8 @@ document.getElementById("confirm").addEventListener("click", () => {
   document.forms["login"].reset();
 });
 
-document.getElementById("uncache").addEventListener("click", () => {
+document.getElementById("uncache").addEventListener("click", async () => {
   localStorage.removeItem("user");
+  await delKey("AUK");
   window.location.reload();
 });

@@ -53,9 +53,6 @@ export function login(email, pwd, secret_key) {
         const B = hex.toBigInt(res.data.B);
         const u = core.derive_u(A, B);
 
-        // TODO: abort if safeguards fail
-        // TODO: change buffer.from to hex
-
         const x = secret_key
           ? await keys.two_sk_derivation(
               pwd,
@@ -105,7 +102,6 @@ export function login(email, pwd, secret_key) {
               ["encrypt", "decrypt", "wrapKey", "unwrapKey"]
             );
 
-            // TOOD: how long to store AUK?
             await keys.storeKey("AUK", AUK);
 
             localStorage.setItem(
