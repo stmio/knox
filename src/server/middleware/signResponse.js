@@ -4,7 +4,9 @@ import { createHmac } from "crypto";
 
 function sign(SAK, method, url, timestamp, body) {
   const HMAC = createHmac("sha512", hex.toBuffer(SAK));
-  HMAC.update(`${method.toUpperCase()}${url}${timestamp.toString()}${body}`);
+  HMAC.update(
+    `${method.toUpperCase()}${url}${timestamp.toString()}${body.enc_data}`
+  );
 
   return HMAC.digest("base64");
 }
