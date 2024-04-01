@@ -45,7 +45,6 @@ if ! which node > /dev/null
     fi
 
 # Check script is running from knox's base directory
-# TODO: Check for package.json as well
 pkgName=$(npm pkg get name 2>/dev/null | tr -d '"')
 if [ "$pkgName" != "knox" ]
     then
@@ -58,7 +57,6 @@ if [ "$pkgName" != "knox" ]
     fi
 
 # Install npm packages
-# TODO: Ask user for confirmation?
 echo "Installing required packages for Knox..."
 npm install > /dev/null
 

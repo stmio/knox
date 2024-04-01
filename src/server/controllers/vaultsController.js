@@ -5,8 +5,6 @@ import { User as UserModel } from "../models/user.model.js";
 const Vault = VaultModel(db);
 const User = UserModel(db);
 
-// TODO: edge cases?
-
 export const getVault = async (req, res, next) => {
   const { vaultUuid, email } = req.body;
 

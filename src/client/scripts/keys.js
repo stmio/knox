@@ -80,6 +80,17 @@ export async function getKey(name) {
   return key;
 }
 
+export async function delKey(name) {
+  const db = await openDB("knox", 1, {
+    upgrade(db) {
+      db.createObjectStore("keys");
+    },
+  });
+
+  await db.delete("keys", name);
+  db.close();
+}
+
 export function generateKeychain(AUK) {
   const webCrypto = window.crypto.subtle;
 
