@@ -44,6 +44,18 @@ export function isEmail(email) {
   return /^\S+@\S+\.\S+$/.test(email);
 }
 
+export function isUrl(string) {
+  let url;
+
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
+}
+
 export function validatePassword(pwd) {
   if (pwd.length < 14)
     return { status: false, msg: "Password must be at least 14 characters" };

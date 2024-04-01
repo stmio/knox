@@ -3,6 +3,7 @@ import "~/pages/vault/vault.css";
 import knoxLogo from "/knox.svg";
 
 import { api } from "~/scripts/middleware.js";
+import { isEmail, isUrl } from "@/utils.js";
 import {
   getUserSession,
   loadKeychain,
@@ -60,12 +61,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     const msg = document.getElementById("msg");
     msg.textContent = "";
 
-    // TODO: validation (stop form url)
-
     const name = document.getElementById("new-name").value;
     const email = document.getElementById("new-email").value;
     const pwd = document.getElementById("new-password").value;
-    const url = document.getElementById("new-url").value;
+    let url = document.getElementById("new-url").value;
+
+    // Check all values are provided
+    if (!name || !email || !pwd || !url) {
+      msg.textContent = "A field is missing a value";
+      return;
+    }
+
+    // Check email address validity
+    if (!isEmail(email)) {
+      msg.textContent = "The provided email is not a valid address";
+      return;
+    }
+
+    // Validate and parse website URL
+    if (!url.startsWith("https://") && !url.startsWith("http://")) {
+      url = "https://" + url;
+    }
+    if (!isUrl(url)) {
+      msg.textContent = "The provided site URL is invalid";
+      return;
+    }
 
     // Check for duplicates
     for (const i in vault) {
