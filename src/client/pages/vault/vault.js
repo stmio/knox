@@ -27,15 +27,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else {
     const user = JSON.parse(localStorage.getItem("user"));
 
-    const name = await api
-      .post("/users/name", {
-        email: session.identity,
-        deviceID: session.device,
-      })
-      .then((res) => res.data)
-      .catch((err) => console.log(err));
-
-    localStorage.setItem("user", JSON.stringify({ ...user, name: name }));
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ ...user, name: await getUserName() })
+    );
   }
 
   await checkUserStatus();
@@ -213,6 +208,16 @@ function checkUserStatus() {
     .post("/auth/status", { email: session.identity, deviceID: session.device })
     .then((res) => console.log(res))
     .catch((err) => console.log(err));
+}
+
+function getUserName() {
+  return api
+    .post("/users/name", {
+      email: session.identity,
+      deviceID: session.device,
+    })
+    .then((res) => res.data)
+    .catch((err) => err);
 }
 
 function getUserKeychainUUIDs() {
